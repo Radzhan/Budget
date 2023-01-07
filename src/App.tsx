@@ -4,6 +4,7 @@ import CategoryAdd from './components/CatagoryAdd/CategoryAdd';
 import Navbar from './components/Navbar/Navbar';
 import Add from './containers/Add/Add';
 import Category from './containers/Category/Category';
+import Main from './containers/Main/Main';
 
 function App() {
   return (
@@ -13,18 +14,21 @@ function App() {
       </header>
       <Routes>
         <Route path='/' element={(
-          <p>main</p>
+          <Main/>
         )}/>
         <Route path='/categories' element={(
           <Category/>
         )}/>
-        <Route path='/category/add' element={(
-          <CategoryAdd/>
+        <Route path='/add' element={(
+          <Add/>
         )}/>
         <Route path='/categories/:id' element={(
           <CategoryAdd/>
         )}/>
-        <Route path='/add' element={(
+        <Route path='/category/add' element={(
+          <CategoryAdd/>
+        )}/>
+        <Route path='/main/:id' element={(
           <Add/>
         )}/>
         <Route path='*' element={(

@@ -30,7 +30,6 @@ const CategoryAdd = () => {
 
     let onFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
         
         if (id !== undefined){
             const objectForEdit = {

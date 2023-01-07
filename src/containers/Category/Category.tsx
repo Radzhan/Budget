@@ -11,18 +11,23 @@ const Category = () => {
     const getArray = useCallback(async () => {
         await dispatch(getCategory());
     }, [dispatch]);
-
+    
     const editType = async (id: string) => {
         await dispatch(getOneType(id));
-    }
-
+    };
+    
     useEffect(() => {
         getArray().catch(console.error);
     }, [getArray]);
-
+    
+    
     const remove = async (id: string) => {
-        await dispatch(deleteCategory(id));
-        navigate('/categories');
+        const confirm = window.confirm('u wonna delete')
+        
+        if (confirm) {
+            await dispatch(deleteCategory(id));
+            navigate('/');
+        }
     };
 
     const createCategoty = category.map(type => {
@@ -35,6 +40,7 @@ const Category = () => {
             </div>
         </div>
     });
+
     return (
         <div>
             <header className='d-flex justify-content-between'>

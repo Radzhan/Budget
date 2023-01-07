@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { categoryArray, getCategory, setTransaction } from '../../store/transactions';
+import { categoryArray, editMain, editOneType, getCategory, getMain, getOneType, mainArrayType, setTransaction } from '../../store/transactions';
 
 const Add = () => {
+    const { id } = useParams()
+    const mainArray = useAppSelector(mainArrayType);
+    const oneType = useAppSelector(editOneType);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const category = useAppSelector(categoryArray);
@@ -15,18 +18,36 @@ const Add = () => {
     });
 
     const now = new Date();
-
     const createdAt = now.toISOString();
+    
+    const idCallback = useCallback(async () => {
+        if (id !== undefined) {
+            await dispatch(getMain(id))
+            await dispatch(getOneType(mainArray.category))
+            const objectFor = {
+                category: oneType.title,
+                type: oneType.type,
+                amounte: mainArray.amounte,
+                id: id,
+            }
+            setType(objectFor)
+        }
+    }, [dispatch, id, mainArray.amounte, mainArray.category, oneType.title, oneType.type])
 
     const getArray = useCallback(async () => {
         await dispatch(getCategory());
     }, [dispatch]);
 
-    useEffect(() => {
-        getArray().catch(console.error);
-    }, [getArray]);
 
-    const onDishChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    useEffect(() => {
+        if (id !== undefined) {
+            idCallback().catch(console.error)
+        } else {
+            getArray().catch(console.error);
+        }
+    }, [getArray, id, idCallback]);
+
+    const onDishChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
         setType(prev => ({ ...prev, [name]: value }));
@@ -47,7 +68,15 @@ const Add = () => {
     let onFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         object.createdAt = createdAt;
-        await dispatch(setTransaction(object));
+        if (id !== undefined) {
+            const objectForEdit = {
+                id,
+                item: type,
+            }
+            await dispatch(editMain(objectForEdit))
+        } else {
+            await dispatch(setTransaction(object));
+        }
         navigate('/')
     };
 
