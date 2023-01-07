@@ -7,3 +7,9 @@ export interface CategoryApi {
     type: string;
     id: string
 }
+
+export interface transactionApi {
+    amounte: number;
+    category: string;
+    createdAt: string;
+}

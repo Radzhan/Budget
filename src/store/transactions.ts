@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
 import axiosApi from "../axiosApi";
-import { Category, CategoryApi } from "../types";
+import { Category, CategoryApi, transactionApi } from "../types";
 
 interface Transaction {
     category: CategoryApi[];
@@ -43,13 +43,16 @@ export const getOneType = createAsyncThunk<Category, string>('transaction/FetchO
 
     return request.data
 })
-
 interface forEdit {
     id: string;
     item: Category;
 }
 export const editCategory = createAsyncThunk<void, forEdit>('transaction/CategoryEdit', async (arg) => {
     await axiosApi.put('/categories/' + arg.id + '.json', arg.item)
+})
+
+export const setTransaction = createAsyncThunk<void, transactionApi>('transaction/Set', async (arg) => {
+    await axiosApi.post('/transactions.json', arg)
 })
 
 export const salarySlice = createSlice({

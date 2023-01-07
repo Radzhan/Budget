@@ -1,16 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { categoryArray, getCategory } from '../../store/transactions';
+import { categoryArray, getCategory, setTransaction } from '../../store/transactions';
 
 const Add = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const category = useAppSelector(categoryArray);
     const [type, setType] = useState({
         category: '',
         type: '',
         amounte: '',
+        id: '',
     });
 
+    const now = new Date();
+
+    const createdAt = now.toISOString();
 
     const getArray = useCallback(async () => {
         await dispatch(getCategory());
@@ -26,8 +32,23 @@ const Add = () => {
         setType(prev => ({ ...prev, [name]: value }));
     };
 
+    const object = {
+        category: '',
+        amounte: Number(type.amounte),
+        createdAt: '',
+    }
+
+    for (let i = 0; i < category.length; i++) {
+        if (category[i].title === type.category && category[i].type === type.type) {
+            object.category = category[i].id;
+        }
+    }
+
     let onFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        object.createdAt = createdAt;
+        await dispatch(setTransaction(object));
+        navigate('/')
     };
 
     const createOption = category.map(option => {
@@ -35,8 +56,8 @@ const Add = () => {
             if (option.type === 'income') {
                 return <option key={option.id} value={option.title}>{option.title}</option>
             }
-        } else if (type.type === 'expense'){
-            if (option.type === 'expense'){
+        } else if (type.type === 'expense') {
+            if (option.type === 'expense') {
                 return <option key={option.id} value={option.title}>{option.title}</option>
             }
         }
@@ -61,7 +82,7 @@ const Add = () => {
                     </select>
                 </div>
                 <div className="mb-3 d-flex">
-                    <label htmlFor="inputTitlte" className="form-label me-5">Amounte</label>
+                    <label htmlFor="inputTitlte" className="form-label me-5">Amount</label>
                     <div className="col-sm-10">
                         <input type="text" name='amounte' className="form-control" id="inputTitle"
                             value={type.amounte}
